@@ -7,7 +7,7 @@ Website: http://fulc.ru/
 hljs.registerLanguage('tex', function(hljs) {
   var COMMAND1 = {
     className: 'command',
-    begin: '\\\\[a-zA-Zа-яА-я]+[\\*]?'
+    begin: '\\\\[a-zA-Z@а-яА-я]+[\\*]?'
   };
   var COMMAND2 = {
     className: 'command',

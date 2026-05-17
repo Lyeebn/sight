@@ -62,7 +62,7 @@
     sql:         ['sql'],
     stylus:      ['styl'],
     swift:       ['swift'],
-    tex:         ['tex'],
+    tex:         ['tex','cls','def','sty','dtx','cfg'],
     typescript:  ['ts'],
     vala:        ['vala', 'vapi'],
     vbnet:       ['vb'],
@@ -137,13 +137,15 @@
   }
 
   function getHighlightingCode(font, fontSize, lineNumbers, language) {
-    return 'document.body.style.fontFamily = "' + font + '";' +
-      'document.body.style.fontSize = "' + fontSize + '";' +
-      'var container = document.querySelector("pre");' +
-      'container.classList.add("' + language + '");' +
-      'hljs.configure({ lineNumbers: ' + lineNumbers + ' });' +
-      'hljs.highlightBlock(container);' +
-      'document.body.style.backgroundColor = getComputedStyle(container).backgroundColor;';
+    return `
+      var container = document.querySelector("pre");
+      if ((container.innerHTML.length > 8<<13) && confirm("prompt: Too Long, skip hight?")) throw 'Too Long Too Hight, todo trigger via short cut';
+      document.body.style.fontFamily = "${font}";
+      document.body.style.fontSize = "${fontSize}";
+      container.classList.add("${language}"); 
+      hljs.configure({ lineNumbers: ${lineNumbers}}); 
+      hljs.highlightBlock(container);
+      document.body.style.backgroundColor = getComputedStyle(container).backgroundColor;`;
   }
 
   const JS_BEUTIFY_CODE =

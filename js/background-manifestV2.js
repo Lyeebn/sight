@@ -1,4 +1,4 @@
-(function() {
+(function() {  // V3 localStorage -> chrome.storage.local,   chrome.tabs.executeScript -> chrome.scripting.executeScript, chrome.tabs.insertCSS -> chrome.scripting.insertCSS
   const LANG_EXT_MAP = {
     actionscript:['actionscript', 'as'],
     apache:      ['httpd', 'conf', 'htaccess'],
@@ -35,7 +35,7 @@
     http:        ['http'],
     ini:         ['ini'],
     java:        ['java', 'class', 'fx'],
-    javascript:  ['js'],
+    javascript:  ['js', 'jsx'],
     json:        ['json'],
     julia:       ['jl'],
     kotlin:      ['kt', 'kts'],
@@ -148,10 +148,10 @@
       document.body.style.backgroundColor = getComputedStyle(container).backgroundColor;`;
   }
 
-  const JS_BEUTIFY_CODE =
-    'var container = document.querySelector("pre");' +
-    'var options = { indent_size: 2 };' +
-    'container.textContent = js_beautify(container.textContent, options);';
+  const JS_BEUTIFY_CODE =`
+    var container = document.querySelector("pre");
+    var options = { indent_size: 2 };
+    container.textContent = js_beautify(container.textContent, options);`;
 
   chrome.webRequest.onCompleted.addListener(function(details) {
     var contentType = getContentTypeFromHeaders(details.responseHeaders);

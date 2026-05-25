@@ -1,4 +1,4 @@
-(function() { // V3 -Deving
+(function() {  // V3 Deving 
   _My设置from_localStorage={//OPTIONS_DEFAULTS
     "theme": "sunburst",
     "fontSize": "xx-large",
@@ -88,10 +88,10 @@
   };
 
   const OPTIONS = Object.keys(OPTIONS_DEFAULTS);
-if (typeof localStorage == 'undefined') { // V2→V3
-  localStorage=chrome.storage.local;
-  localStorage.getItem=localStorage.get;
-  localStorage.setItem=localStorage.set}
+// if (typeof localStorage == 'undefined') { // V2→V3
+//   localStorage=chrome.storage.local;
+//   localStorage.getItem=localStorage.get;
+//   localStorage.setItem=localStorage.set}
   
   OPTIONS.forEach(function(option) {
     var value = /*window?.localStorage?.getItem(option) ||*/ OPTIONS_DEFAULTS[option];
@@ -189,10 +189,10 @@ if (typeof localStorage == 'undefined') { // V2→V3
       );
     }
 
-    scripts.push({
-      code: '1/0;document.writeln(66);console.log(66);alert(66)'  //&& getHighlightingCode()
-        // getHighlightingCode.apply(this, ['font', 'fontSize', 'lineNumbers'].map(localStorage.getItem.bind(localStorage)).concat(language))
-    });
+    // scripts.push({
+    //   code: '1/0;document.writeln(66);console.log(66);alert(66)'  //&& getHighlightingCode()
+    //     // getHighlightingCode.apply(this, ['font', 'fontSize', 'lineNumbers'].map(localStorage.getItem.bind(localStorage)).concat(language))
+    // });
 g=styles[0]
     for (var i = 0; i < styles.length; i++) {
       console.log('details.tabId',details.tabId,chrome.tabs,chrome.scripting.insertCSS, styles[i])
@@ -207,17 +207,16 @@ g=styles[0]
   chrome.scripting.executeScript({
           target: { tabId: details.tabId },
 // 坑 以前通过 code: 传入动态代码，现在两个方式 文件file:、func 但不能用 Function('code') 构造，setTimeout 也不行，只能传字面量
-          func: x=>setTimeout(x,1500), // x=>document.designMode="on"; JS_BEUTIFY_CODE
+          func: x=>setTimeout(x,300), // x=>document.designMode="on"; JS_BEUTIFY_CODE
           args:[getHighlightingCode('Inconsolata', 'medium', true, language)]  // world: "MAIN" 
-  }); // 神经，要这样传参的 https://jishuzhan.net/article/1904550919025537025
-    (function chain(i) {
-      if (i == scripts.length) { return; }
+  }).then(x=>console.log(x, '注入')); // 神经，要这样传参的 https://jishuzhan.net/article/1904550919025537025
+    for (i in scripts)  {
       // chrome.tabs.executeScript(details.tabId, scripts[i], chain.bind(null, i+1));
       console.log(scripts[i],scripts)
       chrome.scripting.executeScript({
           target: { tabId: details.tabId },
           files: [scripts[i].file] })
-    }(0))
+    }
   }, { urls: ['<all_urls>'], types: ['main_frame'] }, ['responseHeaders']);
 }());
 // setTimeout(_=>document.designMode="on", 1500)

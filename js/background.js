@@ -1,10 +1,10 @@
-(function() {  // V3 Deving 
-  _My设置from_localStorage={//OPTIONS_DEFAULTS
-    "theme": "sunburst",
-    "fontSize": "xx-large",
-    "font": "Inconsolata",
-    "lineNumbers": "true"
-};
+// V3 Deving 
+chrome.storage.local.get().then(x=>{
+  Setting=x;//{ theme: 'sunburst', font: 'Inconsolata', fontSize: 'medium', lineNumbers: true, ...x};
+  localStorage=chrome.storage.local;
+  localStorage.setItem= (k,v)=>{let kv={};kv[k]=v; chrome.storage.local.set(kv)};
+  localStorage.getItem= k=> Setting[k];
+}) .then(function() {
   const LANG_EXT_MAP = {
     actionscript:['actionscript', 'as'],
     apache:      ['httpd', 'conf', 'htaccess'],
@@ -88,14 +88,10 @@
   };
 
   const OPTIONS = Object.keys(OPTIONS_DEFAULTS);
-// if (typeof localStorage == 'undefined') { // V2→V3
-//   localStorage=chrome.storage.local;
-//   localStorage.getItem=localStorage.get;
-//   localStorage.setItem=localStorage.set}
-  
+
   OPTIONS.forEach(function(option) {
-    var value = /*window?.localStorage?.getItem(option) ||*/ OPTIONS_DEFAULTS[option];
-    // localStorage.setItem(option, value);
+    var value = localStorage.getItem(option) || OPTIONS_DEFAULTS[option];
+    localStorage.setItem(option, value);
   });
   // Reverse index
   const EXT_LANG_MAP = {};
@@ -159,7 +155,6 @@
     var container = document.querySelector("pre");
     var options = { indent_size: 2 };
     container.textContent = js_beautify(container.textContent, options);`
-    //(...Object.values( OPTIONS_DEFAULTS));
 
   chrome.webRequest.onCompleted.addListener(function(details) {
     var contentType = getContentTypeFromHeaders(details.responseHeaders);
@@ -174,8 +169,8 @@
     var styles  = [
       { file: 'css/reset.css' },
       { file: 'css/main.css' },
-      { file: 'css/sunburst.css' }
-    ]; // localStorage.getItem('theme')
+      { file: 'css/' + localStorage.getItem('theme') + '.css' }
+    ]; // or  css/sunburst.css
 
     var scripts = [
       { file: 'js/lib/highlight.js' },
@@ -208,7 +203,11 @@ g=styles[0]
           target: { tabId: details.tabId },
 // 坑 以前通过 code: 传入动态代码，现在两个方式 文件file:、func 但不能用 Function('code') 构造，setTimeout 也不行，只能传字面量
           func: x=>setTimeout(x,300), // x=>document.designMode="on"; JS_BEUTIFY_CODE
-          args:[getHighlightingCode('Inconsolata', 'medium', true, language)]  // world: "MAIN" 
+          args:[getHighlightingCode(
+            localStorage.getItem('font'), //'Inconsolata'
+            localStorage.getItem('fontSize'), //'medium'
+            localStorage.getItem('lineNumbers'), //true
+            language)]  // world: "MAIN" 
   }).then(x=>console.log(x, '注入')); // 神经，要这样传参的 https://jishuzhan.net/article/1904550919025537025
     for (i in scripts)  {
       // chrome.tabs.executeScript(details.tabId, scripts[i], chain.bind(null, i+1));
@@ -218,5 +217,5 @@ g=styles[0]
           files: [scripts[i].file] })
     }
   }, { urls: ['<all_urls>'], types: ['main_frame'] }, ['responseHeaders']);
-}());
-// setTimeout(_=>document.designMode="on", 1500)
+});
+// 这是背景页，隔离上下文的，要注入到目标页才能 setTimeout(_=>document.designMode="on", 1500)

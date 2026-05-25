@@ -1,4 +1,4 @@
-(function(doc) {
+(function(doc) {  // Work with v2 and v3
   function id(a) { return a }
   function eq(b) { return function(a) { return a === b } }
   function val(obj, key) { return obj[key] }
@@ -45,8 +45,7 @@
       }
     }
   };
-
-  doc.addEventListener('DOMContentLoaded', function() {
+DOE = function () { // globle
     Object.keys(options).forEach(function(name) {
       var opt = options[name];
       var el = doc.querySelector(opt.selector);
@@ -58,5 +57,19 @@
       el[opt.value] = opt.decode(localStorage.getItem(name));
       el.dispatchEvent(new Event('change'));
     });
-  });
+  }
+  
+DefaultSet={ theme: 'sunburst', font: 'Inconsolata', fontSize: 'medium', lineNumbers: true}
+if (  chrome.storage) { // false && V2→V3  typeof localStorage == 'undefined'
+  // cfge = [theme,font,document.getElementById('font-size'),document.getElementById('line-numbers')]
+  chrome.storage.local.get().then(x=>{ DefaultSet={...DefaultSet, ...x};
+      // theme.value=ld.theme;font.value=ld.font;document.getElementById('font-size').value=ld.fontSize;document.getElementById('line-numbers').value=ld.lineNumbers;
+    }).then(x=>console.log(x))
+    chrome.storage.local.set(options);
+  localStorage=chrome.storage.local;
+  localStorage.setItem= (k,v)=>{let kv={};kv[k]=v; chrome.storage.local.set(kv)};
+  localStorage.getItem= k=> DefaultSet[k];
+  setTimeout(DOE, 55);
+} 
+doc.addEventListener('DOMContentLoaded', DOE)  //setTimeout(DOE, 55);
 }(window.document));

@@ -1,10 +1,11 @@
 // V3 Deving 
+chrome.storage.onChanged.addListener( () =>chrome.storage.local.get().then(x=>{Setting=x;console.log('load setting', Setting)}) )
 chrome.storage.local.get().then(x=>{
   Setting=x;//{ theme: 'sunburst', font: 'Inconsolata', fontSize: 'medium', lineNumbers: true, ...x};
   localStorage=chrome.storage.local;
-  localStorage.setItem= (k,v)=>{let kv={};kv[k]=v; chrome.storage.local.set(kv)};
+  localStorage.setItem= (k,v)=>{let kv={};kv[k]=v; localStorage.set(kv)};
   localStorage.getItem= k=> Setting[k];
-}) .then(function() {
+}) .then(function mdzz() {
   const LANG_EXT_MAP = {
     actionscript:['actionscript', 'as'],
     apache:      ['httpd', 'conf', 'htaccess'],
@@ -140,6 +141,7 @@ chrome.storage.local.get().then(x=>{
   }
 
   function getHighlightingCode(font, fontSize, lineNumbers, language) {
+    // chrome.storage.local.get().then(x=>Setting=x)
     return `
       var container = document.querySelector("pre");
       if ((container.innerHTML.length > 8<<13) && confirm("prompt: 太长，是否停止高亮")) throw '太长，不管';
@@ -193,9 +195,9 @@ g=styles[0]
       console.log('details.tabId',details.tabId,chrome.tabs,chrome.scripting.insertCSS, styles[i])
       chrome.scripting.insertCSS({
         target: { tabId: details.tabId },          
-        files: [styles[i].file] //styles[i],//只能二选一 css:  "body { font-size: 38px; }", 
+        files: [styles[i].file] //只能二选一 css:  "body { font-size: 38px; }", 
         });
-      // v2: chrome.tabs.insertCSS(details.tabId, styles[i]); // 
+      // v2: chrome.tabs.insertCSS(details.tabId, styles[i]);
     }
     // console.log(JS_BEUTIFY_CODE, Function) // setTimeout('' + getHighlightingCode('Inconsolata', 'medium', true, 'javascript')
     k=`;alert(document.body.innerText)`
